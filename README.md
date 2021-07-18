@@ -27,11 +27,11 @@ apply plugin: 'module-manager-plugin'
 
 buildscript {
     repositories {
-        mavenLocal()
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
     	//引入插件
-        classpath "com.james:module-manager-plugin:1.0.0"
+        classpath 'com.github.theCakeOfCupid:ModuleManager:1.0.0'
     }
 }
 ```
@@ -118,4 +118,8 @@ gradlew  :<module名称>:assembleRelease
 //例如发布libraryA
 gradlew  :libraryA:assembleRelease
 ```
-
+## 直接引用仓库aar路径
+当本地仓库已有module aar且settings.gradle文件下module没有配置时，直接引用aar
+```
+implementation moduleSettings.module('libraryA')
+```
