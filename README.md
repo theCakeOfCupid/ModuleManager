@@ -1,4 +1,10 @@
+
+
+
+
 # ModuleManager
+
+[![](https://jitpack.io/v/theCakeOfCupid/ModuleManager.svg)](https://jitpack.io/#theCakeOfCupid/ModuleManager)
 
 ## 支持功能
 
