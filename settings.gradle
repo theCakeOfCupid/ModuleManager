@@ -1,0 +1,5 @@
+include ':libraryB'
+include ':libraryA'
+include ':module-manager'
+include ':app'
+rootProject.name = "ModuleManager"

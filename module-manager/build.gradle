@@ -1,0 +1,47 @@
+apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+gradlePlugin {
+    plugins {
+        moduleManager {
+            id = 'module-manager-plugin'
+            implementationClass = 'com.james.ModuleManagePlugin'
+        }
+    }
+}
+
+def javadocJar = task("javadocJar", type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+def sourcesJar = task("sourcesJar", type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.java.srcDirs
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+publishing {
+    publications {
+        Component(MavenPublication) {
+            from components.java
+            groupId = 'com.james'
+            artifactId = 'module-manager-plugin'
+            version = '1.0.0'
+
+            artifact sourcesJar
+        }
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+
+    implementation 'com.google.code.gson:gson:2.8.2'
+}
+
