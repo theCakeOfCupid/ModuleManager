@@ -3,6 +3,7 @@ package com.james.exts;
 
 import com.james.util.StringUtil;
 
+import org.codehaus.groovy.runtime.GStringImpl;
 import org.gradle.api.Project;
 
 /**
@@ -18,6 +19,7 @@ public class ModuleConfig {
     private String path;
     public boolean useByAar;
     private Project project;
+    public GStringImpl mavenUrl;
 
     public void setProject(Project project) {
         this.project = project;

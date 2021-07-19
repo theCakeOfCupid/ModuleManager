@@ -20,6 +20,8 @@ import org.gradle.api.component.SoftwareComponent;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.internal.impldep.com.esotericsoftware.kryo.NotNull;
+import org.gradle.internal.impldep.org.eclipse.jgit.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,13 +46,52 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
         ModuleSettings moduleSettings = project.getRootProject().getExtensions().getByType(
                 ModuleSettings.class);
 
-        project.beforeEvaluate(p -> p.getPluginManager().apply(MAVEN_PUBLISH_PLUGIN_NAME));
-        project.afterEvaluate(p -> configAutoPublishToMavenLocal(project, moduleSettings));
-        project.afterEvaluate(p -> configResolutionStrategy(p, moduleSettings));
-
-        project.getGradle().projectsEvaluated(gradle -> {
-            configPublish(project, moduleSettings);
+        project.beforeEvaluate(p -> {
+            configMavenRepositories(p, moduleSettings);
+            p.getPluginManager().apply(MAVEN_PUBLISH_PLUGIN_NAME);
         });
+
+        project.afterEvaluate(p -> {
+            configAutoPublishToMavenLocal(p, moduleSettings);
+            configResolutionStrategy(p, moduleSettings);
+        });
+
+        project.getGradle().projectsEvaluated(gradle -> configPublish(project, moduleSettings));
+    }
+
+    /**
+     * 配置maven仓库
+     *
+     * @param project        project
+     * @param moduleSettings moduleSettings
+     */
+    private void configMavenRepositories(Project project, ModuleSettings moduleSettings) {
+        String maven = getConfiguredMavenRepository(project,moduleSettings);
+        if (!StringUtil.isNullOrEmpty(maven)){
+            project.getRepositories().maven(mp -> mp.setUrl(moduleSettings.mavenUrl));
+        }
+    }
+
+    /**
+     * 获取当前project需要配置的maven仓库
+     * @param project project
+     * @param moduleSettings moduleSettings
+     * @return 仓库地址
+     */
+    private String getConfiguredMavenRepository(@NonNull Project project,@NonNull ModuleSettings moduleSettings){
+
+        ModuleConfig moduleConfig = moduleSettings.getModuleConfigHashMap().get(
+                StringUtil.getNormalizeName(project.getName()));
+
+        if (null != moduleConfig && null!=moduleConfig.mavenUrl) {
+            return moduleConfig.mavenUrl.toString();
+        }
+
+        if (!StringUtil.isNullOrEmpty(moduleSettings.mavenUrl)) {
+            return moduleSettings.mavenUrl;
+        }
+
+        return null;
     }
 
     /**
@@ -75,12 +116,14 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
         PublishingExtension publishingExt = project.getExtensions().getByType(
                 PublishingExtension.class);
 
-        boolean hasSpecifyMaven = !StringUtil.isNullOrEmpty(moduleSettings.mavenUrl);
+        String configuredMavenRepository = getConfiguredMavenRepository(project, moduleSettings);
+
+        boolean hasSpecifyMaven = !StringUtil.isNullOrEmpty(configuredMavenRepository);
 
         System.out.println("hasSpecifyMaven:" + hasSpecifyMaven);
 
         if (hasSpecifyMaven) {
-            publishingExt.getRepositories().maven(mp -> mp.setUrl(moduleSettings.mavenUrl));
+            publishingExt.getRepositories().maven(mp -> mp.setUrl(configuredMavenRepository));
         }
 
         PublicationContainer publications = publishingExt.getPublications();

@@ -46,17 +46,6 @@ public class ModuleManagePlugin implements Plugin<Project> {
     private void initSubProject(Project project, ModuleSettings moduleSettings) {
         Set<Project> subProjects = project.getSubprojects();
         project.getTasks().register(ONE_KEY_PUBLISH, OneKeyPublishTask.class);
-        for (Project subProject : subProjects) {
-            subProject.beforeEvaluate(pt -> {
-                if (!StringUtil.isNullOrEmpty(moduleSettings.mavenUrl)) {
-                    pt.getRepositories().maven(mp -> mp.setUrl(moduleSettings.mavenUrl));
-                }
-            });
-
-            String name = StringUtil.getNormalizeName(subProject.getName());
-            System.out.println("names:" + name);
-            project.getRootProject().getExtensions().create(name, ModuleConfig.class);
-        }
         for (Project p : subProjects) {
             p.getPlugins().apply(ModuleManageInternalPlugin.class);
         }
