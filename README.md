@@ -31,7 +31,7 @@ buildscript {
     }
     dependencies {
     	//引入插件
-        classpath 'com.github.theCakeOfCupid:ModuleManager:1.0.0'
+        classpath 'com.github.theCakeOfCupid:ModuleManager:1.0.1'
     }
 }
 ```
@@ -78,6 +78,7 @@ apply from: 'module-settings.gradle'
     modulelibraryA(
           ...
     )
+  
 - **useByAar**
 
   是否以aar方式引入，默认为false，该属性被设置为true时，项目里所有以project方式引用此module的依赖会自动替换成aar引用
@@ -98,9 +99,30 @@ apply from: 'module-settings.gradle'
 
 - **mavenUrl**
 
-  指定仓库发布，当该属性被定义时，module将会发布到指定的仓库，且从该从库引入依赖件，例如示例清单中定义了mavenUrl = "$rootDir/moduleRepo"，则通过该插件发布的module会被发布到此目录下。若没有配置mavenUrl，将会默认发布到mavenLocal。
-
-
+  指定仓库发布，当该属性被定义时，module将会发布到指定的仓库，且从该从库引入依赖件，你可以单独为module设置自己的仓库，也可以设置一个全局仓库，也可以什么都不设置（默认将使用本地maven仓库），示例如下：
+  
+  ```
+  moduleSettings {
+      libraryA(
+              useByAar: true,
+              groupId: 'com.james',
+              artifactId: 'libraryA',
+              version: '1.4'
+      )
+      libraryB(
+              useByAar: true,
+              groupId: 'com.james',
+              artifactId: 'libraryB',
+              version: '1.2',
+              //为libraryB单独设置仓库
+              mavenUrl:"$rootDir/moduleRepoB"
+      )
+  	//设置全局仓库
+      mavenUrl = "$rootDir/moduleRepo"
+  }
+  ```
+  
+  仓库生效优先级依次是：module参数内配置的仓库 > 全局仓库 > 本地仓库
 
 ## 一键发布所有module
 
