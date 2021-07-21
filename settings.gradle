@@ -1,3 +1,4 @@
+include ':library-c'
 include ':libraryB'
 include ':libraryA'
 include ':module-manager'

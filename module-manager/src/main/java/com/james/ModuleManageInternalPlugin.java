@@ -7,6 +7,7 @@ import com.james.exts.ModuleConfig;
 import com.james.exts.ModuleSettings;
 import com.james.util.StringUtil;
 
+import org.codehaus.groovy.runtime.GStringImpl;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -16,13 +17,19 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.DependencySubstitutions;
 import org.gradle.api.artifacts.ProjectDependency;
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.artifacts.repositories.ArtifactRepository;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.component.SoftwareComponent;
+import org.gradle.api.internal.artifacts.BaseRepositoryFactory;
+import org.gradle.api.internal.artifacts.dsl.DefaultRepositoryHandler;
+import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
-import org.gradle.internal.impldep.com.esotericsoftware.kryo.NotNull;
 import org.gradle.internal.impldep.org.eclipse.jgit.annotations.NonNull;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -66,24 +73,26 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
      * @param moduleSettings moduleSettings
      */
     private void configMavenRepositories(Project project, ModuleSettings moduleSettings) {
-        String maven = getConfiguredMavenRepository(project,moduleSettings);
-        if (!StringUtil.isNullOrEmpty(maven)){
+        String maven = getConfiguredMavenRepository(project, moduleSettings);
+        if (!StringUtil.isNullOrEmpty(maven)) {
             project.getRepositories().maven(mp -> mp.setUrl(moduleSettings.mavenUrl));
         }
     }
 
     /**
      * 获取当前project需要配置的maven仓库
-     * @param project project
+     *
+     * @param project        project
      * @param moduleSettings moduleSettings
      * @return 仓库地址
      */
-    private String getConfiguredMavenRepository(@NonNull Project project,@NonNull ModuleSettings moduleSettings){
+    private String getConfiguredMavenRepository(@NonNull Project project,
+            @NonNull ModuleSettings moduleSettings) {
 
         ModuleConfig moduleConfig = moduleSettings.getModuleConfigHashMap().get(
                 StringUtil.getNormalizeName(project.getName()));
 
-        if (null != moduleConfig && null!=moduleConfig.mavenUrl) {
+        if (null != moduleConfig && null != moduleConfig.mavenUrl) {
             return moduleConfig.mavenUrl.toString();
         }
 
@@ -257,6 +266,14 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
                 if (null == moduleConfig) {
                     continue;
                 }
+
+                GStringImpl ml = moduleConfig.mavenUrl;
+                String mavenUrl = ml == null ? "" : ml.toString();
+
+                if (!StringUtil.isNullOrEmpty(mavenUrl)) {
+                    mavenIfItNotExist(project, mavenUrl);
+                }
+
                 if (!moduleConfig.useByAar) {
                     continue;
                 }
@@ -266,5 +283,71 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
         return resolutionHashMap;
     }
 
+    /**
+     * 如果当前project不包含该maven仓库，则添加该maven仓库
+     *
+     * @param project  project
+     * @param mavenUrl mavenUrl
+     */
+    private void mavenIfItNotExist(@NonNull Project project, @NonNull String mavenUrl) {
+        if (StringUtil.isNullOrEmpty(mavenUrl)) {
+            return;
+        }
+        //todo 防止重复添加
+//        RepositoryHandler repositories = project.getRepositories();
+//        for (ArtifactRepository artifactRepository : repositories) {
+//            if (artifactRepository instanceof DefaultMavenArtifactRepository) {
+//
+//                DefaultMavenArtifactRepository defaultMavenArtifactRepository =
+//                        (DefaultMavenArtifactRepository) artifactRepository;
+//
+//                String url = defaultMavenArtifactRepository.getUrl().toString();
+//                String formatUrlString = getFormatUrlString(repositories, mavenUrl);
+//                //如果为空的话可能是gradle api变动，还是往里面加，宁加错不放过
+//                if (!StringUtil.isNullOrEmpty(formatUrlString) && formatUrlString.equals(
+//                        url)) {
+//                    return;
+//                }
+//            }
+//        }
+        project.getRepositories().maven(mp -> mp.setUrl(mavenUrl));
+    }
+
+    /**
+     * 通过反射获取格式化的mavenUrl
+     *
+     * @param repositories 当前project的RepositoryHandler
+     * @param mavenUrl     需要被格式化的mavenUrl
+     * @return 格式化之后的mavenUrl
+     */
+    private String getFormatUrlString(@NonNull RepositoryHandler repositories,
+            @NonNull String mavenUrl) {
+        if (StringUtil.isNullOrEmpty(mavenUrl)) {
+            return null;
+        }
+        Class<DefaultRepositoryHandler> defaultRepositoryHandlerClass =
+                DefaultRepositoryHandler.class;
+
+        try {
+            Field[] fields = defaultRepositoryHandlerClass.getFields();
+            for (Field f :
+                    fields) {
+                System.out.println(f.getName());
+            }
+            Field repositoryFactory = defaultRepositoryHandlerClass.getField("repositoryFactory");
+            repositoryFactory.setAccessible(true);
+            BaseRepositoryFactory baseRepositoryFactory =
+                    (BaseRepositoryFactory) repositoryFactory.get(repositories);
+            MavenArtifactRepository mavenRepository =
+                    baseRepositoryFactory.createMavenRepository();
+            mavenRepository.setUrl(mavenUrl);
+            repositoryFactory.setAccessible(false);
+
+            return mavenRepository.getUrl().toString();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

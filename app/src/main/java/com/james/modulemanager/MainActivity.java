@@ -1,11 +1,12 @@
 package com.james.modulemanager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
+import com.james.library_c.ClassC;
 import com.james.librarya.LibraryAClass;
 import com.james.libraryb.LibraryB;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,5 +16,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         LibraryAClass.testHello();
         LibraryB.testHello();
+        ClassC.testC();
     }
 }
