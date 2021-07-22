@@ -31,7 +31,7 @@ buildscript {
     }
     dependencies {
     	//引入插件
-        classpath 'com.github.theCakeOfCupid:ModuleManager:1.0.1'
+        classpath 'com.github.theCakeOfCupid:ModuleManager:1.0.2'
     }
 }
 ```
@@ -75,9 +75,14 @@ apply from: 'module-settings.gradle'
 
   显而易见是module名称，这里一定要和你的真实module名称一致，不然插件会找不到对应的module，如果你的module名携带特殊字符，你需要处理一下，因为groovy dsl对特殊字符支持并不友好，例如你的module名是module-library-A，你需要将特殊字符去掉，改成modulelibraryA，即
 
+  ```
     modulelibraryA(
-          ...
+              useByAar: false,
+              groupId: 'com.james',
+              artifactId: 'module-library-A',
+              version: '1.2'
     )
+  ```
   
 - **useByAar**
 
