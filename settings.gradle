@@ -4,6 +4,6 @@ include ':libraryA'
 include ':module-manager'
 include ':app'
 
-project(':library-c').projectDir = new File('test/library-c')
+//project(':library-c').projectDir = new File('test/library-c')
 
 rootProject.name = "ModuleManager"
