@@ -6,7 +6,10 @@ package com.james.librarya;
  */
 public class LibraryAClass {
 
-    public static void testHello(){
+    /**
+     * 测试JavaSource
+     */
+    public static void testHello() {
         System.out.println("im libraryA");
     }
 }

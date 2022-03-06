@@ -3,21 +3,25 @@ moduleSettings {
             useByAar: true,
             groupId: 'com.james',
             artifactId: 'libraryA',
-            version: '1.4'
+            version: '1.4',
+            androidJavaDoc: true,
+            androidJavaSource: true
     )
     libraryB(
             useByAar: true,
             groupId: 'com.james',
             artifactId: 'libraryB',
             version: '1.3',
-            mavenUrl:"$rootDir/moduleRepoB"
+            androidJavaDoc: true,
+            androidJavaSource: true,
+            mavenUrl: "$rootDir/moduleRepoB"
     )
     libraryc(
             useByAar: false,
             groupId: 'com.james',
             artifactId: 'library-c',
-            version: '1.2',
-            mavenUrl:"$rootDir/moduleRepoB"
+            version: '1.3',
+            mavenUrl: "$rootDir/moduleRepoB"
     )
 
     mavenUrl = "$rootDir/moduleRepo"

@@ -47,6 +47,7 @@ public class ModuleManagePlugin implements Plugin<Project> {
         Set<Project> subProjects = project.getSubprojects();
         project.getTasks().register(ONE_KEY_PUBLISH, OneKeyPublishTask.class);
         for (Project p : subProjects) {
+            System.out.println(p.getName());
             p.getPlugins().apply(ModuleManageInternalPlugin.class);
         }
     }

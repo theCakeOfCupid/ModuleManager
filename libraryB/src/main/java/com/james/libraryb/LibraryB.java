@@ -6,6 +6,9 @@ package com.james.libraryb;
  */
 public class LibraryB {
 
+    /**
+     * libraryB testHello
+     */
     public static void testHello(){
         System.out.println("im libraryB");
     }

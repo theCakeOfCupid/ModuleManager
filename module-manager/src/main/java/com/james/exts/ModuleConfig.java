@@ -20,6 +20,9 @@ public class ModuleConfig {
     public boolean useByAar;
     private Project project;
     public GStringImpl mavenUrl;
+    public boolean androidJavaDoc;
+    public boolean androidJavaSource;
+    public boolean needAndroidJavaDocsAddReferencesLinks;
 
     public void setProject(Project project) {
         this.project = project;

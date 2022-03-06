@@ -5,6 +5,7 @@ import static com.james.ModuleManagePlugin.ONE_KEY_PUBLISH;
 
 import com.james.exts.ModuleConfig;
 import com.james.exts.ModuleSettings;
+import com.james.tasks.TaskManager;
 import com.james.util.StringUtil;
 
 import org.codehaus.groovy.runtime.GStringImpl;
@@ -19,17 +20,14 @@ import org.gradle.api.artifacts.DependencySubstitutions;
 import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.component.SoftwareComponent;
-import org.gradle.api.internal.artifacts.BaseRepositoryFactory;
-import org.gradle.api.internal.artifacts.dsl.DefaultRepositoryHandler;
 import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.internal.impldep.org.eclipse.jgit.annotations.NonNull;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -145,7 +143,16 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
                 System.out.println("can't find default component");
                 return;
             }
+
             publication.from(release);
+            if (moduleConfig.androidJavaDoc) {
+                System.out.println(project.getName() + "---1doc---" + project.getTasks().findByName(
+                        "androidJavadocJar"));
+                publication.artifact(TaskManager.getAndroidJavadocJar(project));
+            }
+            if (moduleConfig.androidJavaSource) {
+                publication.artifact(TaskManager.getAndroidSourcesJar(project));
+            }
             System.out.println(
                     "publish = " + moduleConfig.getGroupId() + ":" + moduleConfig.getArtifactId()
                             + ":" + moduleConfig.getVersion());
@@ -293,61 +300,31 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
         if (StringUtil.isNullOrEmpty(mavenUrl)) {
             return;
         }
-        //todo 防止重复添加
-//        RepositoryHandler repositories = project.getRepositories();
-//        for (ArtifactRepository artifactRepository : repositories) {
-//            if (artifactRepository instanceof DefaultMavenArtifactRepository) {
-//
-//                DefaultMavenArtifactRepository defaultMavenArtifactRepository =
-//                        (DefaultMavenArtifactRepository) artifactRepository;
-//
-//                String url = defaultMavenArtifactRepository.getUrl().toString();
-//                String formatUrlString = getFormatUrlString(repositories, mavenUrl);
-//                //如果为空的话可能是gradle api变动，还是往里面加，宁加错不放过
-//                if (!StringUtil.isNullOrEmpty(formatUrlString) && formatUrlString.equals(
-//                        url)) {
-//                    return;
-//                }
-//            }
-//        }
+        //防止重复添加
+        RepositoryHandler repositories = project.getRepositories();
+        for (ArtifactRepository artifactRepository : repositories) {
+            if (artifactRepository instanceof DefaultMavenArtifactRepository) {
+
+                DefaultMavenArtifactRepository defaultMavenArtifactRepository =
+                        (DefaultMavenArtifactRepository) artifactRepository;
+                String url = defaultMavenArtifactRepository.getUrl().getRawPath();
+
+                if (getTempFormatRawPath(url).equals(getTempFormatRawPath(mavenUrl))) {
+                    return;
+                }
+            }
+        }
         project.getRepositories().maven(mp -> mp.setUrl(mavenUrl));
     }
 
-    /**
-     * 通过反射获取格式化的mavenUrl
-     *
-     * @param repositories 当前project的RepositoryHandler
-     * @param mavenUrl     需要被格式化的mavenUrl
-     * @return 格式化之后的mavenUrl
-     */
-    private String getFormatUrlString(@NonNull RepositoryHandler repositories,
-            @NonNull String mavenUrl) {
-        if (StringUtil.isNullOrEmpty(mavenUrl)) {
-            return null;
+    private String getTempFormatRawPath(String url) {
+        if (StringUtil.isNullOrEmpty(url)) {
+            return url;
         }
-        Class<DefaultRepositoryHandler> defaultRepositoryHandlerClass =
-                DefaultRepositoryHandler.class;
-
-        try {
-            Field[] fields = defaultRepositoryHandlerClass.getFields();
-            for (Field f :
-                    fields) {
-                System.out.println(f.getName());
-            }
-            Field repositoryFactory = defaultRepositoryHandlerClass.getField("repositoryFactory");
-            repositoryFactory.setAccessible(true);
-            BaseRepositoryFactory baseRepositoryFactory =
-                    (BaseRepositoryFactory) repositoryFactory.get(repositories);
-            MavenArtifactRepository mavenRepository =
-                    baseRepositoryFactory.createMavenRepository();
-            mavenRepository.setUrl(mavenUrl);
-            repositoryFactory.setAccessible(false);
-
-            return mavenRepository.getUrl().toString();
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String temp = url;
+        temp = temp.replaceAll("\\\\", "");
+        temp = temp.replaceAll("/", "");
+        return temp;
     }
 
 }
