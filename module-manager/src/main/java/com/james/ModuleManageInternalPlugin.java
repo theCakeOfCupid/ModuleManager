@@ -25,7 +25,6 @@ import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactReposi
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
-import org.gradle.api.tasks.TaskProvider;
 import org.gradle.internal.impldep.org.eclipse.jgit.annotations.NonNull;
 
 import java.util.HashMap;
@@ -40,7 +39,8 @@ public class ModuleManageInternalPlugin implements Plugin<Project> {
     private static final String PUBLISH_NAME = "module";
     private static final String DEFAULT_COMPONENT = "release";
     private static final String LIBRARY_PLUGIN_NAME = "com.android.library";
-    private static final String MAVEN_PUBLISH_PLUGIN_NAME = "maven-publish";
+    public static final String MAVEN_PUBLISH_PLUGIN_NAME = "maven-publish";
+    public static final String PUBLISH_ALL_PUBLICATIONS = "publishAllPublicationsToMavenRepository";
     private static final String DEFAULT_PUBLISH_TASK = "publishToMavenLocal";
     private static final String ASSEMBLE_TASK = "assembleRelease";
 

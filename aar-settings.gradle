@@ -1,0 +1,4 @@
+localAarSettings{
+    aarDir = "$rootDir/localAarRepo"
+    mavenUrl = "$rootDir/localAarRepo/localAarMavenRepo3"
+}

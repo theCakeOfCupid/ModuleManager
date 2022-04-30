@@ -2,6 +2,7 @@
 
 //apply plugin:'module-manager-plugin'
 //apply from: 'module-settings.gradle'
+//apply from: 'aar-settings.gradle'
 
 buildscript {
     repositories {
@@ -12,7 +13,7 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.0.0"
-//        classpath 'com.james:module-manager-plugin:1.0.2'
+        classpath 'com.james:module-manager-plugin:1.0.3'
 //        classpath "com.github.theCakeOfCupid:ModuleManager:1.0.2"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

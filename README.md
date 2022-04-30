@@ -4,6 +4,8 @@
 
 # ModuleManager
 
+[TOC]
+
 [![](https://jitpack.io/v/theCakeOfCupid/ModuleManager.svg)](https://jitpack.io/#theCakeOfCupid/ModuleManager)
 
 ## 支持功能
@@ -145,7 +147,54 @@ gradlew  :<module名称>:assembleRelease
 //例如发布libraryA
 gradlew  :libraryA:assembleRelease
 ```
-## 直接引用仓库aar路径
+## module内引用了本地aar怎么办
+
+需要将本地aar继续转换成仓库，两步即可实现：
+
+### 1、配置本地aar仓库
+
+以demo为示例，我们在项目根目录下新建一个文件夹“localAarRepo”，将所有本地aar放入该文件夹，然后跟模块配置一样，我们新建一个aar-settings.gradle的配置文件：
+
+```
+localAarSettings{
+	//存放本地aar的路径
+    aarDir = "$rootDir/localAarRepo"
+    //本地aar生成的仓库路径
+    mavenUrl = "$rootDir/localAarRepo/localAarMavenRepo3"
+}
+```
+
+同样，我们需要在项目build.gradle里引入aar-settings.gradle配置文件
+
+```
+//...
+apply plugin:'module-manager-plugin'
+apply from: 'module-settings.gradle'
+apply from: 'aar-settings.gradle'
+//...
+```
+
+完成以上步骤，我们就可以将所有本地aar发布到配置的仓库路径下了，发布命令为：
+
+```
+gradlew oneKeyPublishLocalAar
+```
+
+### 2、引用本地aar
+
+在步骤一里面我们已经成功将所有本地aar发布到仓库，接下来我们只需要在对应的模块更改下引用方式即可，例如我们需要引用test1.aar：
+
+```
+//引用test1.aar
+implementation aars["test1.aar"]
+//引用test2.aar
+implementation aars["test2.aar"]
+```
+
+
+
+## 直接引用仓库模块路径
+
 当本地仓库已有module aar且settings.gradle文件下module没有配置时，直接引用aar
 ```
 implementation moduleSettings.module('libraryA')

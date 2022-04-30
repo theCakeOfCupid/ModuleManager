@@ -18,6 +18,7 @@ public class StringUtil {
         }
         projectName = projectName.replaceAll("_", "");
         projectName = projectName.replaceAll("-", "");
+        projectName = projectName.replaceAll("\\.", "");
         return projectName;
     }
 
@@ -29,5 +30,9 @@ public class StringUtil {
             stringBuffer.append(o.toString());
         }
         return stringBuffer.toString();
+    }
+
+    public static String getMavenPath(String groupId,String name, String version){
+        return groupId+":"+name+":"+version;
     }
 }

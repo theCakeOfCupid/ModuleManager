@@ -1,0 +1,91 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.james",
+    "module": "libraryB",
+    "version": "1.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.1.1",
+      "buildId": "3naknoynivfqjfim4g3y3fecji"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.james",
+          "module": "test1aar",
+          "version": {
+            "requires": "2.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "libraryB-1.3.aar",
+          "url": "libraryB-1.3.aar",
+          "size": 23450,
+          "sha512": "512b6e45cf51a21f30b2bf706b2a08bbef777a49f183ea4809d39dde5b07e64ad14f1478f98ba07aadad695501c3580fd4f55f69ee96df4c815ee5aa13c51176",
+          "sha256": "020bfef901d8f0740ff2c4e17aad23856525a315d87aaa891edac8a644343615",
+          "sha1": "1c3769c4ed954e4707fd3f3a87b39cef95fc4cde",
+          "md5": "073a9ebbc57de20d2bcfa14ab000591a"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "1.1.0"
+          }
+        },
+        {
+          "group": "com.google.android.material",
+          "module": "material",
+          "version": {
+            "requires": "1.1.0"
+          }
+        },
+        {
+          "group": "com.james",
+          "module": "test1aar",
+          "version": {
+            "requires": "2.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "libraryB-1.3.aar",
+          "url": "libraryB-1.3.aar",
+          "size": 23450,
+          "sha512": "512b6e45cf51a21f30b2bf706b2a08bbef777a49f183ea4809d39dde5b07e64ad14f1478f98ba07aadad695501c3580fd4f55f69ee96df4c815ee5aa13c51176",
+          "sha256": "020bfef901d8f0740ff2c4e17aad23856525a315d87aaa891edac8a644343615",
+          "sha1": "1c3769c4ed954e4707fd3f3a87b39cef95fc4cde",
+          "md5": "073a9ebbc57de20d2bcfa14ab000591a"
+        }
+      ]
+    }
+  ]
+}

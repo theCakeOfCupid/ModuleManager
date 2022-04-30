@@ -23,7 +23,6 @@ android {
 }
 
 dependencies {
-    implementation project(':libraryA')
     implementation project(':libraryB')
     implementation project(':library-c')
     implementation fileTree(dir: "libs", include: ["*.jar"])
