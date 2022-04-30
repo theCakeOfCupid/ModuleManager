@@ -3,7 +3,6 @@ package com.james.modulemanager;
 import android.os.Bundle;
 
 import com.james.library_c.ClassC;
-import com.james.librarya.LibraryAClass;
 import com.james.libraryb.LibraryB;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +13,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LibraryAClass.testHello();
         LibraryB.testHello();
         ClassC.testC();
     }

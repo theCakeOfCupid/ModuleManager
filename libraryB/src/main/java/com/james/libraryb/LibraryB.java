@@ -1,6 +1,5 @@
 package com.james.libraryb;
 
-import com.james.librarya.LibraryAClass;
 
 /**
  * @author james
@@ -12,7 +11,6 @@ public class LibraryB {
      * libraryB testHello
      */
     public static void testHello() {
-        LibraryAClass.testHello();
         System.out.println("im libraryB");
     }
 }
