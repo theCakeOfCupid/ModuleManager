@@ -4,8 +4,18 @@
 
 # ModuleManager
 
-[TOC]
-
+- [支持功能](#支持功能)
+- [完成配置只需要两步](#完成配置只需要两步)
+	- [引入插件](#引入插件)
+	- [配置module清单](#配置module清单)
+		- [配置参数说明](#配置参数说明)
+- [一键发布所有module](#一键发布所有module)
+- [发布单个module](#发布单个module)
+- [module内引用了本地aar怎么办](#module内引用了本地aar怎么办)
+	- [配置本地aar仓库](#配置本地aar仓库)
+	- [引用本地aar](#引用本地aar)
+	
+	
 [![](https://jitpack.io/v/theCakeOfCupid/ModuleManager.svg)](https://jitpack.io/#theCakeOfCupid/ModuleManager)
 
 ## 支持功能
@@ -19,7 +29,7 @@
 
 ## 完成配置只需要两步
 
-### 1、引入插件
+### 引入插件
 
 在工程目录下build.gradle文件中引入插件
 
@@ -38,7 +48,7 @@ buildscript {
 }
 ```
 
-### 2、配置module清单
+### 配置module清单
 
 你可以在工程目录下build.gradle文件里直接配置也可以单独创建一份清单文件，然后在工程目录下build.gradle文件里引入，
 
@@ -151,7 +161,7 @@ gradlew  :libraryA:assembleRelease
 
 需要将本地aar继续转换成仓库，两步即可实现：
 
-### 1、配置本地aar仓库
+### 配置本地aar仓库
 
 以demo为示例，我们在项目根目录下新建一个文件夹“localAarRepo”，将所有本地aar放入该文件夹，然后跟模块配置一样，我们新建一个aar-settings.gradle的配置文件：
 
@@ -180,7 +190,7 @@ apply from: 'aar-settings.gradle'
 gradlew oneKeyPublishLocalAar
 ```
 
-### 2、引用本地aar
+### 引用本地aar
 
 在步骤一里面我们已经成功将所有本地aar发布到仓库，接下来我们只需要在对应的模块更改下引用方式即可，例如我们需要引用test1.aar：
 
